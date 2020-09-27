@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workspaceFilter version="1.0">
+    <filter root="/content/dam/adaptto-cloud-demo">
+        <!-- Exclude folder thumbnails - they will be generated automatically -->
+        <exclude pattern="^.*/jcr:content/folderThumbnail(/.*)?$"/>
+    </filter>
+    <filter root="/content/adaptto-cloud-demo"/>
+    <filter root="/content/experience-fragments/adaptto-cloud-demo"/>
+    <filter root="/conf/adaptto-cloud-demo">
+        <include pattern="/conf/adaptto-cloud-demo/.*"/>
+        <exclude pattern="/conf/adaptto-cloud-demo/rep:policy(/.*)?"/>
+        <exclude pattern="/conf/adaptto-cloud-demo/settings/wcm(/.*)?"/>
+    </filter>
+</workspaceFilter>

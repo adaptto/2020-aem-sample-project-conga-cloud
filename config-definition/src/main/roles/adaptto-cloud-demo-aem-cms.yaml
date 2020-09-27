@@ -1,0 +1,79 @@
+# Project-specific AEM configuration
+
+# Inherit default AEM functionality from "AEM Definitions", see http://devops.wcm.io/conga/definitions/aem/
+inherits:
+- role: aem-cms
+
+variants:
+- variant: aem-author
+- variant: aem-publish
+
+templateDir: adaptto-cloud-demo-aem-cms
+
+files:
+
+
+# AEM OSGi System Configuration
+- file: adaptto-cloud-demo-aem-cms-config.provisioning
+  dir: packages
+  template: adaptto-cloud-demo-aem-cms-config.provisioning.hbs
+  postProcessors:
+  - aem-contentpackage-osgiconfig
+  postProcessorOptions:
+    contentPackage:
+      name: adaptto-cloud-demo-aem-cms-config
+      rootPath: /apps/adaptto-cloud-demo/config
+      filters:
+      - filter: /apps/adaptto-cloud-demo
+        rules:
+        - rule: include
+          pattern: /apps/adaptto-cloud-demo/config(\..*)?(/.*)?
+        - rule: exclude
+          pattern: /apps/adaptto-cloud-demo/config/rewriter(/.*)?
+
+# Include URL handler in Sling Rewriter configuration
+- file: adaptto-cloud-demo-aem-cms-rewriter-config.json
+  dir: packages
+  template: adaptto-cloud-demo-aem-cms-rewriter-config.json.hbs
+  validatorOptions:
+    contentPackage.validatorsSettings:
+      jackrabbit-filter:
+        options:
+          validRoots: /apps/adaptto-cloud-demo/config
+  postProcessors:
+  - aem-contentpackage
+  postProcessorOptions:
+    contentPackage:
+      name: adaptto-cloud-demo-aem-cms-rewriter-config
+      packageType: application
+      acHandling: merge
+      rootPath: /apps/adaptto-cloud-demo/config/rewriter
+
+# Application package
+- url: mvn:to.adapt2020/to.adapt2020.clouddemo.complete//zip
+  dir: packages
+
+# Application conf content package
+- url: mvn:to.adapt2020/to.adapt2020.clouddemo.conf-content//zip
+  dir: packages
+  condition: ${app.confContent}
+
+# Application sample content package
+- url: mvn:to.adapt2020/to.adapt2020.clouddemo.sample-content//zip
+  dir: packages
+  condition: ${app.sampleContent}
+
+
+# Defines configuration parameters and default values
+config:
+  contentPackage:
+    group: adaptto-demo
+    version: ${version}
+
+  app:
+    confContent: true
+    sampleContent: false
+
+  # Log levels
+  log:
+    projectSpecificLogLevel: warn
